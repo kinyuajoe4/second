@@ -1,9 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.untitled">
+    package="com.example.getx_demo">
    <application
-        android:label="ELC_Kimathi"
+        android:label="getx_demo"
         android:name="${applicationName}"
-        android:icon="@mipmap/logoo">
+        android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
             android:exported="true"

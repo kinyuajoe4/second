@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:untitled/main.dart';
+import 'package:untitled/home.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 void main() => runApp(reg());
 
 class reg extends StatefulWidget {
@@ -8,80 +11,80 @@ class reg extends StatefulWidget {
     return _regState();
   }
 }
-
 class _regState extends State<reg> {
+  final emailController= TextEditingController();
+  final passwordController= TextEditingController();
+  final GlobalKey<FormState> _key= GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return  MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
-          backgroundColor: Colors.black54,
+          backgroundColor: Colors.pink[50],
           appBar: AppBar(
-            backgroundColor: Colors.black87,
-            title: Center(child: Text("Login Page")),
+            backgroundColor: Colors.black,
+            title: Center(child: Text("User registration Page")),
           ),
           body: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 60.0),
-                  child: Center(
-                    child: Container(
-                        width: 200,
-                        height: 150,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(image: NetworkImage('https://pbs.twimg.com/media/FFLheCWXsAEmRqE.jpg')),
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(50.0)),),
-                  ),
-                ),
-                User(),
-                Email(),
-                Pass(),
-                Pass2(),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 15.0, right: 15.0, top: 15, bottom: 0),
-                  //padding: EdgeInsets.symmetric(horizontal: 15),
-                  child: TextField(
-
-                    obscureText: true,
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Password',
-                        hintText: 'Enter secure password'),
-                  ),
-                ),
-                TextButton(
-                  onPressed: (){
-
-                  },
-                  child: Text(
-                    'Forgot Password',
-                    style: TextStyle(color: Colors.brown, fontSize: 15),
-                  ),
-                ),
-                Container(
-                  height: 50,
-                  width: 250,
-                  decoration: BoxDecoration(
-                      color: Colors.brown, borderRadius: BorderRadius.circular(20)),
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context, MaterialPageRoute(builder: (_) => elc()));
-                    },
-                    child: Text(
-                      'Login',
-                      style: TextStyle(color: Colors.white, fontSize: 25),
+            child: Form(
+              key: _key,
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(top: 60.0),
+                    child: Center(
+                      child: Container(
+                          width: 100,
+                          height: 100,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(image: NetworkImage('https://pbs.twimg.com/media/FFLheCWXsAEmRqE.jpg')),
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(50.0)),),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 130,
-                ),
-                Text('New User? Create Account')
-              ],
+                  SizedBox(
+                   height: 30,
+                  ),
+                  User(),
+                  Email(),
+                  Pass(),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 15.0, right: 15.0, top: 15, bottom: 0),
+                    //padding: EdgeInsets.symmetric(horizontal: 15),
+                    child: TextFormField(
+                      controller: passwordController,validator: validatePassword,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Password',
+                          hintText: 'Enter secure password'),
+                    ),
+                  ),
+SizedBox(height: 20,),
+                  Container(
+                    height: 50,
+                    width: 250,
+                    decoration: BoxDecoration(
+                        color: Colors.brown, borderRadius: BorderRadius.circular(20)),
+                    child: TextButton(
+                      onPressed: () async{
+                        if(_key.currentState!.validate()){
+                        await FirebaseAuth.instance.createUserWithEmailAndPassword(email: emailController.text, password: passwordController.text);
+                        setState((){});}
+                      },
+                      child: Text(
+                        'Register',
+                        style: TextStyle(color: Colors.white, fontSize: 25),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 50,
+                  ),
+
+                ],
+              ),
             ),
           ),
         ));
@@ -90,10 +93,13 @@ class _regState extends State<reg> {
     padding:
     const EdgeInsets.only(left: 15.0, right: 15.0, top: 15, bottom: 0),
     //padding: EdgeInsets.symmetric(horizontal: 15),
-    child: TextField(
+    child: TextFormField(
+      controller: emailController,validator: validateEmail,
+      style: TextStyle(color: Colors.black),
       obscureText: false,
       decoration: InputDecoration(
           border: OutlineInputBorder(),
+
           labelText: 'Email',
           hintText: 'Enter your Email'),
     ),
@@ -112,10 +118,11 @@ class _regState extends State<reg> {
     const EdgeInsets.only(left: 15.0, right: 15.0, top: 15, bottom: 0),
     //padding: EdgeInsets.symmetric(horizontal: 15),
     child: TextField(
-      obscureText: true,
+      controller: passwordController,
+      obscureText: false,
       decoration: InputDecoration(
           border: OutlineInputBorder(),
-          labelText: 'Password',
+          labelText: ' Enter Password',
           hintText: 'Enter your password'),
     ),
   );
@@ -124,10 +131,10 @@ class _regState extends State<reg> {
     const EdgeInsets.only(left: 15.0, right: 15.0, top: 15, bottom: 0),
     //padding: EdgeInsets.symmetric(horizontal: 15),
     child: TextField(
-      obscureText: true,
+      obscureText: false,
       decoration: InputDecoration(
           border: OutlineInputBorder(),
-          labelText: 'Confirm Password',
+          labelText: 'Password',
           hintText: 'Confirm your password'),
     ),
   );
@@ -156,3 +163,22 @@ class _regState extends State<reg> {
     ],
   );
    }
+String? validateEmail(String? formEmail){
+  if (formEmail ==null|| formEmail.isEmpty)
+    return'Email required';
+
+  String pattern = r'\w+@\w+\.\w+';
+  RegExp regex = RegExp(pattern);
+  if (!regex.hasMatch(formEmail)) return 'invalid email adresss';
+  return null;
+}
+String? validatePassword(String? formPassword){
+  if (formPassword ==null|| formPassword.isEmpty)
+    return'Email required';
+  String pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
+      RegExp regex = RegExp (pattern);
+  if (!regex. hasMatch(formPassword))
+    return '''Password must be at least 8 characters,
+  include an uppercase letter, number and symbol.''';
+  return null;
+}
