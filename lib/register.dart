@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:untitled/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -15,12 +16,13 @@ class _regState extends State<reg> {
   final emailController= TextEditingController();
   final passwordController= TextEditingController();
   final GlobalKey<FormState> _key= GlobalKey<FormState>();
+  String errorMessage='';
   @override
   Widget build(BuildContext context) {
     return  MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
-          backgroundColor: Colors.pink[50],
+          backgroundColor: Colors.white,
           appBar: AppBar(
             backgroundColor: Colors.black,
             title: Center(child: Text("User registration Page")),
@@ -61,7 +63,9 @@ class _regState extends State<reg> {
                           hintText: 'Enter secure password'),
                     ),
                   ),
-SizedBox(height: 20,),
+                   SizedBox(height: 20,),
+                  Text(errorMessage),
+                  SizedBox(height: 20,),
                   Container(
                     height: 50,
                     width: 250,
@@ -70,8 +74,14 @@ SizedBox(height: 20,),
                     child: TextButton(
                       onPressed: () async{
                         if(_key.currentState!.validate()){
+                          try{
                         await FirebaseAuth.instance.createUserWithEmailAndPassword(email: emailController.text, password: passwordController.text);
-                        setState((){});}
+                        setState((){});}catch(signUpError){
+                            if(signUpError is PlatformException){
+                              if( signUpError.code=='ERROR EMAIL ALREADY IN USE'){}
+                            }
+                          }
+                          }
                       },
                       child: Text(
                         'Register',

@@ -34,10 +34,10 @@ class _elcState extends State<elc> {
   @override
   Widget build(BuildContext context) {
   return Scaffold(
-    backgroundColor: Colors.orange[100],
+    backgroundColor: Colors.white,
 
       appBar: AppBar(
-        backgroundColor: Colors.brown,
+        backgroundColor: Colors.black,
         title: Center(child: Text("Login Page")),
       ),
       body: SingleChildScrollView(
@@ -45,14 +45,23 @@ class _elcState extends State<elc> {
           key: _key,
           child: Column(
             children: <Widget>[
+              SizedBox(
+                height: 20,
+              ),
+              Text('WELOME BACK',
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.orangeAccent
+                ),
+                  ),
               Padding(
                 padding: const EdgeInsets.only(top: 60.0),
                 child: Center(
                   child: Container(
                       width: 200,
                       height: 150,
-                      child: Image.network(
-                          'https://images.unsplash.com/photo-1633989464081-16ccd31287a1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8ZWxwJTIwdGV4dHxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60')),
+                      child: Image.asset(
+                          'images/helooo.png')),
                 ),
               ),
 
@@ -145,7 +154,12 @@ class _elcState extends State<elc> {
           controller: emailController,validator: validateEmail,
           obscureText: false,
           decoration: InputDecoration(
-              border: OutlineInputBorder(),
+              border: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.white
+                )
+              ),
+              hintStyle: TextStyle(color: Colors.white),
               labelText: 'Email',
               hintText: 'Enter your Email'),
         ),
