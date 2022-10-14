@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:untitled/draggable.dart';
 import 'package:untitled/home.dart';
 import 'package:untitled/register.dart';
@@ -9,6 +10,7 @@ import 'firebase_options.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.removeAfter(initialization);
   await Firebase.initializeApp(
        options: DefaultFirebaseOptions.currentPlatform,
        );
@@ -18,7 +20,7 @@ void main() async{
     home: elc(),
   ));
 }
-
+Future initialization(BuildContext?context)async{await Future.delayed(Duration(seconds: 3));}
 class elc extends StatefulWidget {
 
   @override
@@ -30,7 +32,7 @@ class _elcState extends State<elc> {
    final emailController= TextEditingController();
    final passwordController= TextEditingController();
    final GlobalKey<FormState> _key= GlobalKey<FormState>();
-
+   Future initialization(BuildContext?context)async{await Future.delayed(Duration(seconds: 3));}
   @override
   Widget build(BuildContext context) {
   return Scaffold(
