@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:untitled/main.dart';
 void main() => runApp(hom());
@@ -10,6 +11,7 @@ class hom extends StatefulWidget {
 }
 
 class _homState extends State<hom> {
+  final user= FirebaseAuth.instance.currentUser!;
   @override
   Widget build(BuildContext context) {
     return  MaterialApp(
@@ -17,12 +19,14 @@ class _homState extends State<hom> {
         home: Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(
-            backgroundColor: Colors.black87,
+            backgroundColor: Colors.brown,
             title: Center(child: Text("home")),
           ),
           body: SingleChildScrollView(
             child: Column(
-              children: <Widget>[
+              children: [
+                Text('LOGGED IN AS'),
+                Text(user.email!),
 
                 TextButton(
                   onPressed: (){
@@ -30,6 +34,17 @@ class _homState extends State<hom> {
                   },
                   child: Text(
                     'home',
+                    style: TextStyle(color: Colors.brown, fontSize: 15),
+                  ),
+
+                ),
+                SizedBox(
+                  height: 100,
+                ),
+                TextButton(
+                  onPressed: ()=> FirebaseAuth.instance.signOut(),
+                  child: Text(
+                    'log out',
                     style: TextStyle(color: Colors.brown, fontSize: 15),
                   ),
                 ),],

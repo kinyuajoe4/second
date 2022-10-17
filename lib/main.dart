@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:get/get.dart';
 import 'package:untitled/draggable.dart';
 import 'package:untitled/home.dart';
 import 'package:untitled/register.dart';
@@ -10,11 +12,13 @@ import 'firebase_options.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  final navigatorKey= GlobalKey<NavigatorState>();
   FlutterNativeSplash.removeAfter(initialization);
   await Firebase.initializeApp(
        options: DefaultFirebaseOptions.currentPlatform,
        );
   runApp(MaterialApp(
+    navigatorKey: navigatorKey,
     theme: new ThemeData(scaffoldBackgroundColor: const Color(0xFFEFEFEF)),
     debugShowCheckedModeBanner: false,
     home: elc(),
@@ -30,19 +34,29 @@ class elc extends StatefulWidget {
 class _elcState extends State<elc> {
    ValueNotifier<ThemeMode>  get _err => ValueNotifier(ThemeMode.light);
    final emailController= TextEditingController();
+   final navigatorKey= GlobalKey<NavigatorState>();
    final passwordController= TextEditingController();
    final GlobalKey<FormState> _key= GlobalKey<FormState>();
    Future initialization(BuildContext?context)async{await Future.delayed(Duration(seconds: 3));}
   @override
-  Widget build(BuildContext context) {
-  return Scaffold(
+  void dispose(){emailController.dispose();
+   passwordController.dispose();
+   super.dispose();}
+  Widget build(BuildContext context) => Scaffold(
     backgroundColor: Colors.white,
 
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Center(child: Text("Login Page")),
+        title: Center(child: Text("ELC DeKUT")),
       ),
-      body: SingleChildScrollView(
+      body:StreamBuilder(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context,snapshot){
+          if(snapshot.connectionState== ConnectionState.waiting) return Center(child: CircularProgressIndicator(),);
+          else if (snapshot.hasError) return Center(child: Text('KIMEUMANA'),);
+          else if (snapshot.hasData){ return hom();}
+          else
+          return SingleChildScrollView(
         child: Form(
           key: _key,
           child: Column(
@@ -85,11 +99,7 @@ class _elcState extends State<elc> {
                 decoration: BoxDecoration(
                     color: Colors.brown, borderRadius: BorderRadius.circular(20)),
                 child: TextButton(
-                  onPressed: () async{
-                    await FirebaseAuth.instance.signInWithEmailAndPassword(email: emailController.text, password: passwordController.text);
-                  setState(() {
-                  });
-                    },
+                  onPressed: signIn,
                   child: Text(
                     'Login',
                     style: TextStyle(color: Colors.white, fontSize: 25),
@@ -100,7 +110,7 @@ class _elcState extends State<elc> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) =>Yap()),
+                    MaterialPageRoute(builder: (context) =>hom()),
                   );
                 },
                 child: Text(
@@ -120,9 +130,9 @@ class _elcState extends State<elc> {
             ],
           ),
         ),
-      ),
+      );}),
     );
-  }
+
 
   Widget User() => Padding(
       //padding: const EdgeInsets.only(left:15.0,right: 15.0,top:0,bottom: 0),
@@ -132,6 +142,8 @@ class _elcState extends State<elc> {
             border: OutlineInputBorder(),
             labelText: 'Username',
             hintText: 'Enter valid usernane as joseph'),
+        cursorColor: Colors.cyan,
+        textInputAction: TextInputAction.next,
       ));
 
   Widget Pass() => Padding(
@@ -139,12 +151,14 @@ class _elcState extends State<elc> {
             const EdgeInsets.only(left: 15.0, right: 15.0, top: 15, bottom: 0),
         //padding: EdgeInsets.symmetric(horizontal: 15),
         child: TextFormField(
-          controller: passwordController,validator: validatePassword,
+          controller: passwordController,
           obscureText: true,
           decoration: InputDecoration(
               border: OutlineInputBorder(),
               labelText: 'Password',
               hintText: 'Enter your password'),
+          cursorColor: Colors.cyan,
+          textInputAction: TextInputAction.next,
         ),
       );
 
@@ -189,6 +203,14 @@ class _elcState extends State<elc> {
           ),
         ),
       );
+   Future signIn() async{ 
+     showDialog(context: context, barrierDismissible: false, builder:(context)=>Center(child: CircularProgressIndicator(),));
+     try{
+     await FirebaseAuth.instance.signInWithEmailAndPassword(
+         email: emailController.text.trim(),
+         password: passwordController.text.trim());} on FirebaseAuthException catch(e){ print(e);}
+navigatorKey.currentState!.popUntil((route)=>route.isFirst);
+   }
 }
 String? validateEmail(String? formEmail){
   if (formEmail ==null|| formEmail.isEmpty)
@@ -208,4 +230,6 @@ String? validatePassword(String? formPassword){
     return '''Password must be at least 8 characters,
   include an uppercase letter, number and symbol.''';
   return null;
+
+
 }

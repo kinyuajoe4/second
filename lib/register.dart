@@ -55,7 +55,7 @@ class _regState extends State<reg> {
                         left: 15.0, right: 15.0, top: 15, bottom: 0),
                     //padding: EdgeInsets.symmetric(horizontal: 15),
                     child: TextFormField(
-                      controller: passwordController,validator: validatePassword,
+                      controller: passwordController,
                       obscureText: true,
                       decoration: InputDecoration(
                           border: OutlineInputBorder(),
@@ -75,11 +75,9 @@ class _regState extends State<reg> {
                       onPressed: () async{
                         if(_key.currentState!.validate()){
                           try{
-                        await FirebaseAuth.instance.createUserWithEmailAndPassword(email: emailController.text, password: passwordController.text);
-                        setState((){});}catch(signUpError){
-                            if(signUpError is PlatformException){
-                              if( signUpError.code=='ERROR EMAIL ALREADY IN USE'){}
-                            }
+                        await FirebaseAuth.instance.createUserWithEmailAndPassword(email: emailController.text.trim(), password: passwordController.text.trim());
+                        setState((){});} on FirebaseAuthException catch(e){print(e);
+
                           }
                           }
                       },
@@ -172,7 +170,7 @@ class _regState extends State<reg> {
       ),
     ],
   );
-   }
+
 String? validateEmail(String? formEmail){
   if (formEmail ==null|| formEmail.isEmpty)
     return'Email required';
@@ -191,4 +189,4 @@ String? validatePassword(String? formPassword){
     return '''Password must be at least 8 characters,
   include an uppercase letter, number and symbol.''';
   return null;
-}
+}}
