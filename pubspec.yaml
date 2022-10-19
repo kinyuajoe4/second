@@ -50,6 +50,9 @@ dependencies:
   floating: ^1.1.0
   flutter_launcher_icons: ^0.10.0
   flutter_native_splash: ^2.2.11
+  firebase_database: ^9.1.7
+
+
 
 
 
@@ -62,9 +65,9 @@ dev_dependencies:
 
 flutter_native_splash:
   color: "ffffff"
-  image: images/helooo.png
+  image: images/logg.png
 flutter icons:
-  image_path: "images/logg.png"
+  image_path: "images/log.png"
   android: true
 
 

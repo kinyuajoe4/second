@@ -6,20 +6,19 @@ import 'package:get/get.dart';
 import 'package:untitled/draggable.dart';
 import 'package:untitled/home.dart';
 import 'package:untitled/register.dart';
+import 'package:untitled/scroll%20bar.dart';
 import 'package:untitled/theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  final navigatorKey= GlobalKey<NavigatorState>();
+
   FlutterNativeSplash.removeAfter(initialization);
   await Firebase.initializeApp(
        options: DefaultFirebaseOptions.currentPlatform,
        );
   runApp(MaterialApp(
-    navigatorKey: navigatorKey,
-    theme: new ThemeData(scaffoldBackgroundColor: const Color(0xFFEFEFEF)),
     debugShowCheckedModeBanner: false,
     home: elc(),
   ));
@@ -37,6 +36,8 @@ class _elcState extends State<elc> {
    final navigatorKey= GlobalKey<NavigatorState>();
    final passwordController= TextEditingController();
    final GlobalKey<FormState> _key= GlobalKey<FormState>();
+   bool isLoading = false;
+   String errorMessage = '';
    Future initialization(BuildContext?context)async{await Future.delayed(Duration(seconds: 3));}
   @override
   void dispose(){emailController.dispose();
@@ -53,7 +54,7 @@ class _elcState extends State<elc> {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context,snapshot){
           if(snapshot.connectionState== ConnectionState.waiting) return Center(child: CircularProgressIndicator(),);
-          else if (snapshot.hasError) return Center(child: Text('KIMEUMANA'),);
+          else if (snapshot.hasError) return Center(child: Text('Try Again'),);
           else if (snapshot.hasData){ return hom();}
           else
           return SingleChildScrollView(
@@ -90,6 +91,9 @@ class _elcState extends State<elc> {
                 height: 20,
               ),
               Pass(),
+              Center(
+                child: Text(errorMessage),
+              ),
               SizedBox(
                 height: 50,
               ),
@@ -100,7 +104,8 @@ class _elcState extends State<elc> {
                     color: Colors.brown, borderRadius: BorderRadius.circular(20)),
                 child: TextButton(
                   onPressed: signIn,
-                  child: Text(
+                  child: isLoading?CircularProgressIndicator(color:Colors.red ,)
+                  :Text(
                     'Login',
                     style: TextStyle(color: Colors.white, fontSize: 25),
                   ),
@@ -110,7 +115,7 @@ class _elcState extends State<elc> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) =>hom()),
+                    MaterialPageRoute(builder: (context) =>Test()),
                   );
                 },
                 child: Text(
@@ -118,6 +123,12 @@ class _elcState extends State<elc> {
                   style: TextStyle(color: Colors.brown, fontSize: 15),
                 ),
               ),
+              Padding(
+                padding:EdgeInsets.symmetric(horizontal:10.0),
+                child:Container(
+                  height:2.0,
+                  width:150.0,
+                  color:Colors.black,),),
               SizedBox(
                 height: 90,
               ),
@@ -151,7 +162,7 @@ class _elcState extends State<elc> {
             const EdgeInsets.only(left: 15.0, right: 15.0, top: 15, bottom: 0),
         //padding: EdgeInsets.symmetric(horizontal: 15),
         child: TextFormField(
-          controller: passwordController,
+          controller: passwordController,validator: validatePassword,
           obscureText: true,
           decoration: InputDecoration(
               border: OutlineInputBorder(),
@@ -190,7 +201,7 @@ class _elcState extends State<elc> {
         },
         child: RichText(
           text: TextSpan(
-            text: 'New user?',
+            text: '',
             style: TextStyle(color: Colors.black, fontSize: 15),
             children: const <TextSpan>[
               TextSpan(
@@ -203,13 +214,21 @@ class _elcState extends State<elc> {
           ),
         ),
       );
-   Future signIn() async{ 
-     showDialog(context: context, barrierDismissible: false, builder:(context)=>Center(child: CircularProgressIndicator(),));
+   Future signIn() async{
+     setState(()=> isLoading= true);
+if (_key.currentState!.validate()){
      try{
      await FirebaseAuth.instance.signInWithEmailAndPassword(
          email: emailController.text.trim(),
-         password: passwordController.text.trim());} on FirebaseAuthException catch(e){ print(e);}
-navigatorKey.currentState!.popUntil((route)=>route.isFirst);
+         password: passwordController.text.trim());
+     Navigator.push(
+       context,
+       MaterialPageRoute(builder: (context) => hom()),
+     );
+     errorMessage ='';
+     } on FirebaseAuthException catch (error) {
+       errorMessage = error.message!;}
+     setState(() =>isLoading= false);
    }
 }
 String? validateEmail(String? formEmail){
@@ -223,8 +242,8 @@ String? validateEmail(String? formEmail){
 }
 String? validatePassword(String? formPassword){
   if (formPassword ==null|| formPassword.isEmpty)
-    return'Email required';
-  String pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
+    return'Password require';
+  String pattern = r'^[a-zA-Z0-9]{6,}$';
   RegExp regex = RegExp (pattern);
   if (!regex. hasMatch(formPassword))
     return '''Password must be at least 8 characters,
@@ -232,4 +251,4 @@ String? validatePassword(String? formPassword){
   return null;
 
 
-}
+}}
