@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:untitled/main.dart';
+import 'package:untitled/user%20detail.dart';
 void main() => runApp(hom());
 
 class hom extends StatefulWidget {
@@ -15,19 +16,28 @@ class _homState extends State<hom> {
   @override
   Widget build(BuildContext context) {
     return  MaterialApp(
+
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+          textTheme: TextTheme(headline4: TextStyle(color: Colors.purple)),
+        ),
         debugShowCheckedModeBanner: false,
         home: Scaffold(
           backgroundColor: Colors.white,
           bottomNavigationBar: BottomNavigationBar(
+            fixedColor: Colors.cyan,
 
-            items: const <BottomNavigationBarItem>[
+            items: [
               BottomNavigationBarItem(
 
                 icon: Icon(Icons.bookmark,
                 color: Colors.black,),
                 label: 'Resources',
               ),
+
               BottomNavigationBarItem(
+
                 icon: Icon(Icons.people_outlined,
                 color: Colors.black,),
                 label: 'DMIS',
@@ -57,6 +67,7 @@ class _homState extends State<hom> {
                   fontSize: 20,
                   fontWeight: FontWeight.bold
                 ),),
+                Dev(),
                 Text(user.email!),
                 Padding(
                     padding: const EdgeInsets.only(top: 60.0),
@@ -79,7 +90,10 @@ class _homState extends State<hom> {
                               color: Colors.brown,
                             ),
                             onPressed: () {
-                              // do something
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => My()),
+                              );
                             },
                           )],
                       ),
@@ -172,7 +186,7 @@ class _homState extends State<hom> {
     child:Container(
       height:55.0,
       width:150.0,
-      color:Colors.white,
+      color:Colors.black54,
     ),
   );
   Widget Pass() => Padding(

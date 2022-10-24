@@ -7,7 +7,7 @@ import 'package:untitled/draggable.dart';
 import 'package:untitled/home.dart';
 import 'package:untitled/register.dart';
 import 'package:untitled/scroll%20bar.dart';
-import 'package:untitled/theme.dart';
+import 'package:untitled/user detail.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 
@@ -17,8 +17,7 @@ void main() async{
   FlutterNativeSplash.removeAfter(initialization);
   await Firebase.initializeApp(
        options: DefaultFirebaseOptions.currentPlatform,
-       );
-  runApp(MaterialApp(
+  );runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     home: elc(),
   ));

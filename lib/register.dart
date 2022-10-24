@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:untitled/main.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 void main() => runApp(reg());
 
 class reg extends StatefulWidget {
@@ -18,22 +19,20 @@ class reg extends StatefulWidget {
 class _regState extends State<reg> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  final usernameController = TextEditingController();
-  late DatabaseReference dbRef;
+  final controller = TextEditingController();
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
   String errorMessage = '';
   bool isLoading = false;
   @override
   void initState(){
     super.initState();
-    dbRef= FirebaseDatabase.instance.ref().child('Information');
+
   }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
-          backgroundColor: Colors.white,
           appBar: AppBar(
             backgroundColor: Colors.black,
             title: Center(child: Text("User registration Page")),
@@ -123,6 +122,17 @@ class _regState extends State<reg> {
                       height: 40,
                     ),
                     Hyper(),
+                    TextButton(
+                      onPressed: () {
+                     final name=controller.text;
+                     createUser(name:name);
+
+                      },
+                      child :Text(
+                        'Register',
+                        style: TextStyle(color: Colors.blue, fontSize: 25),
+                      ),
+                    ),
                     SizedBox(
                       height: 20,
                     ),
@@ -132,6 +142,13 @@ class _regState extends State<reg> {
             );},
           ),
         ));
+  }
+  Future createUser({required String name})async{
+    final docUser= FirebaseFirestore.instance.collection('users').doc('my-id');
+    final json={
+      'name':name,
+      'age':21
+    };await docUser.set(json);
   }
 
   Widget Email() => Padding(
@@ -153,7 +170,7 @@ class _regState extends State<reg> {
       //padding: const EdgeInsets.only(left:15.0,right: 15.0,top:0,bottom: 0),
       padding: EdgeInsets.symmetric(horizontal: 15),
       child: TextField(
-        controller: usernameController,
+        controller: controller,
         decoration: InputDecoration(
             border: OutlineInputBorder(),
             labelText: 'Username',
