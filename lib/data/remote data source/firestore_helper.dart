@@ -7,18 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import '../models/user_model.dart';
 
 class firestorehelper{
-  static Stream<List<UserModel>>read(){
-    final userCollection = FirebaseFirestore.instance.collection('users');
-    return userCollection.snapshots().map((querySnapshot)=>querySnapshot.docs.map((e) => UserModel.fromSnapshot(e).toList()));
-
-
-
-  }
-
-
-
-
-   static Future create( UserModel user) async{
+  static Future create( UserModel user) async{
 
       final userCollection = FirebaseFirestore.instance.collection('users');
       final docRef = userCollection.doc();

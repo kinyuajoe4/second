@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:untitled/main.dart';
+import 'package:untitled/register.dart';
 import 'package:untitled/user%20detail.dart';
 void main() => runApp(hom());
 
@@ -12,65 +14,45 @@ class hom extends StatefulWidget {
 }
 
 class _homState extends State<hom> {
+
   final user= FirebaseAuth.instance.currentUser!;
+  fetch() async {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get()
+          .then((ds) {
+        myEmail.text = ds['email'];
+      }).catchError((e) {
+        print(e);
+        print("THe email is : ");
+        print(myEmail.text);
+      });
+  }
   @override
+
   Widget build(BuildContext context) {
     return  MaterialApp(
-
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-          textTheme: TextTheme(headline4: TextStyle(color: Colors.purple)),
-        ),
         debugShowCheckedModeBanner: false,
         home: Scaffold(
-          backgroundColor: Colors.white,
-          bottomNavigationBar: BottomNavigationBar(
-            fixedColor: Colors.cyan,
 
-            items: [
-              BottomNavigationBarItem(
-
-                icon: Icon(Icons.bookmark,
-                color: Colors.black,),
-                label: 'Resources',
-              ),
-
-              BottomNavigationBarItem(
-
-                icon: Icon(Icons.people_outlined,
-                color: Colors.black,),
-                label: 'DMIS',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.notification_important, color: Colors.black,),
-                label:('News'),
-
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.camera, color: Colors.black,),
-                label: 'Gallery',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.account_box_outlined, color: Colors.black,),
-                label: 'Profile',
-              ),
-            ],
-          ),
           body: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 SizedBox(height: 50,),
-                Text('LOGGED IN AS:',style: TextStyle(color: Colors.brown,
-                letterSpacing: 4,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold
-                ),),
-                Dev(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children:[  Dev(),
+                    Text('LOGGED IN AS:',style: TextStyle(color: Colors.brown,
+                  letterSpacing: 4,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold
+                  ),)],
+                ),
                 Text(user.email!),
                 Padding(
-                    padding: const EdgeInsets.only(top: 60.0),
+                    padding: const EdgeInsets.only(top: 35.0),
                     child: Center(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -104,15 +86,21 @@ class _homState extends State<hom> {
                   ),
 
 
-              Details(),
+              Name(),
                 SizedBox(height: 20,),
-                Details(),
+                Branch(),
                 SizedBox(height: 20,),
-                Details(),
+                ScholarCode(),
                 SizedBox(height: 20,),
-                Details(),
-                SizedBox(height: 50,),
-                Getout()
+                Yearofstd(),
+                SizedBox(
+                  height: 40,
+                ),
+                Getout(),
+                SizedBox(
+                  height: 10,
+                ),
+
 
               ],
             ),
@@ -141,18 +129,86 @@ class _homState extends State<hom> {
       ),
     ),
   );
-  Widget Details()=>Container(
-    height: 65,
+  Widget Name()=>Container(
+    height: 60,
     width: 360,
     decoration: BoxDecoration(
       border: Border.all(color: Colors.black38),
         color: Colors.white12,
         borderRadius: BorderRadius.circular(20)),
     child: Row(
+
         mainAxisAlignment: MainAxisAlignment.start,
-        children:[Text('Name:',style: TextStyle(color: Colors.brown,
-        fontSize: 17),),
-    Text('Joseph Ndungu Kinyua')]),
+        children:[
+
+          Text('Name:',style: TextStyle(color: Colors.brown,
+        fontSize: 20),) ,
+          FutureBuilder(
+            future: fetch(),
+            builder: (context, snapshot){
+              return Text('${myEmail.text}',
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.brown[800],
+                fontWeight: FontWeight.bold
+
+              ),);
+            },
+          )]),
+  );
+  Widget Branch()=>Container(
+    height: 60,
+    width: 360,
+    decoration: BoxDecoration(
+        border: Border.all(color: Colors.black38),
+        color: Colors.white12,
+        borderRadius: BorderRadius.circular(20)),
+    child: Row(
+
+        mainAxisAlignment: MainAxisAlignment.start,
+        children:[
+
+          Text('Branch:',style: TextStyle(color: Colors.brown,
+              fontSize: 20),) ,
+          FutureBuilder(
+            future: fetch(),
+            builder: (context, snapshot){
+              return Text('${branch.text}',
+                style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.brown[800],
+                    fontWeight: FontWeight.bold
+
+                ),);
+            },
+          )]),
+  );
+  Widget ScholarCode()=>Container(
+    height: 60,
+    width: 360,
+    decoration: BoxDecoration(
+        border: Border.all(color: Colors.black38),
+        color: Colors.white12,
+        borderRadius: BorderRadius.circular(20)),
+    child: Row(
+
+        mainAxisAlignment: MainAxisAlignment.start,
+        children:[
+
+          Text('Scholar code:',style: TextStyle(color: Colors.brown,
+              fontSize: 20),) ,
+          FutureBuilder(
+            future: fetch(),
+            builder: (context, snapshot){
+              return Text('${code.text}',
+                style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.brown[800],
+                    fontWeight: FontWeight.bold
+
+                ),);
+            },
+          )]),
   );
   Widget Email() => Padding(
     padding:
@@ -188,6 +244,33 @@ class _homState extends State<hom> {
       width:150.0,
       color:Colors.black54,
     ),
+  );
+  Widget Yearofstd()=>Container(
+    height: 60,
+    width: 360,
+    decoration: BoxDecoration(
+        border: Border.all(color: Colors.black38),
+        color: Colors.white12,
+        borderRadius: BorderRadius.circular(20)),
+    child: Row(
+
+        mainAxisAlignment: MainAxisAlignment.start,
+        children:[
+
+          Text('Year of Study:',style: TextStyle(color: Colors.brown,
+              fontSize: 20),) ,
+          FutureBuilder(
+            future: fetch(),
+            builder: (context, snapshot){
+              return Text('${Fyear.text}',
+                style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.brown[800],
+                    fontWeight: FontWeight.bold
+
+                ),);
+            },
+          )]),
   );
   Widget Pass() => Padding(
     padding:
@@ -237,5 +320,6 @@ class _homState extends State<hom> {
       ),
     ],
   );
+
 
 }

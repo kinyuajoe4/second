@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -11,8 +12,10 @@ import 'package:untitled/user detail.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 
+String userId = '';
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+
 
   FlutterNativeSplash.removeAfter(initialization);
   await Firebase.initializeApp(
@@ -21,6 +24,10 @@ void main() async{
     debugShowCheckedModeBanner: false,
     home: elc(),
   ));
+  User? user = FirebaseAuth.instance.currentUser;
+  if(user != null){
+    userId = user.uid;
+  }
 }
 Future initialization(BuildContext?context)async{await Future.delayed(Duration(seconds: 3));}
 class elc extends StatefulWidget {
@@ -251,3 +258,17 @@ String? validatePassword(String? formPassword){
 
 
 }}
+
+fetch() async {
+  final firebaseUser = await FirebaseAuth.instance.currentUser;
+  if (firebaseUser != null)
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .get()
+        .then((ds) {
+      myEmail.text = ds['email'];
+    }).catchError((e) {
+      print(e);
+    });
+}
